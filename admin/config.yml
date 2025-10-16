@@ -1,0 +1,71 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Where uploaded media files will be stored relative to the repo
+media_folder: "assets/uploads"
+# Path used by the site to load media files
+public_folder: "/assets/uploads"
+
+collections:
+  # Single JSON file for editing the site content
+  - name: "content"
+    label: "Site Content"
+    files:
+      - file: "content.json"
+        label: "Conference Site Content"
+        name: "site_content"
+        format: "json"
+        fields:
+          - name: theme
+            label: Theme Colors
+            widget: object
+            fields:
+              - { name: primary, label: Primary, widget: string }
+              - { name: primaryAlt, label: Primary Alt, widget: string }
+              - { name: accent, label: Accent, widget: string }
+              - { name: mint, label: Mint, widget: string }
+              - { name: ink, label: Ink, widget: string }
+              - { name: sand, label: Sand, widget: string }
+              - { name: gold, label: Gold, widget: string }
+          - name: event
+            label: Event
+            widget: object
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: hashtag, label: Hashtag, widget: string }
+              - { name: dates, label: Dates, widget: string }
+              - { name: city, label: City, widget: string }
+              - { name: themeLine, label: Theme Line, widget: string }
+          - name: org
+            label: Organizer
+            widget: object
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: email, label: Email, widget: string }
+              - { name: phone, label: Phone, widget: string }
+              - { name: website, label: Website, widget: string }
+          - name: tickets
+            label: Tickets
+            widget: list
+            fields:
+              - { name: id, label: ID, widget: string }
+              - { name: name, label: Name, widget: string }
+              - { name: priceTZS, label: Price TZS, widget: number }
+              - name: perks
+                label: Perks
+                widget: list
+                field: { name: perk, label: Perk, widget: string }
+          - name: payment
+            label: Payment
+            widget: object
+            fields:
+              - { name: merchantName, label: Merchant Name, widget: string }
+              - { name: tanqrNumber, label: TANeQR Number, widget: string }
+              - { name: bankAccountName, label: Bank Account Name, widget: string }
+              - { name: bankAccountNo, label: Bank Account Number, widget: string }
+              - { name: bankName, label: Bank Name, widget: string }
+              - { name: mpesaPayNumber, label: M-Pesa Lipa, widget: string }
+              - { name: tigopesaPayNumber, label: Tigo Pesa Lipa, widget: string }
+              - { name: airtelMoneyPayNumber, label: Airtel Money Lipa, widget: string }
+              - { name: halopesaPayNumber, label: HaloPesa Lipa, widget: string }
