@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NGCC Landing Page</title>
+    <!-- Import Poppins font used in the conference branding -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Load TailwindCSS via CDN for utility classes (mirrors your design system) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM UMD builds -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for in‑browser JSX transformation -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <script type="text/babel">
+      // React implementation of the NGCC landing page.
+      // Uses the provided config and layout from the user’s code.
+      const NGCCLandingPage = () => {
+        // --- Simple config you can tweak quickly ---
+        // The default site configuration. A separate `content.json` file can override these values at runtime
+        // when edited via Netlify CMS. See the remoteConfig/useEffect logic below.
+        const DEFAULT_CONFIG = {
+          theme: {
+            primary: "#1B5E20", // deep green (from deck)
+            primaryAlt: "#2E7D32", // emerald
+            accent: "#00A48A", // teal accent used in highlights
+            mint: "#E6F4F1", // light mint background blocks
+            ink: "#123226", // dark text
+            sand: "#F7FAF8", // page bg
+            gold: "#C8A24A", // subtle accent for VIP / highlights
+          },
+          event: {
+            title: "National Green Capital Conference (NGCC)",
+            hashtag: "#NGCC2025",
+            dates: "27–28 Nov 2025",
+            city: "Dar es Salaam, Tanzania",
+            themeLine:
+              "Accelerating Green Finance & Jobs towards Tanzania’s Climate‑Resilient Economy",
+          },
+          org: {
+            name: "ROTAI Company Ltd.",
+            email: "info@rotai.co.tz",
+            phone: "+255 745 404 545",
+            website: "https://www.rotai.co.tz",
+          },
+          // Replace ticket prices when finalized
+          tickets: [
+            {
+              id: "standard",
+              name: "Standard Pass",
+              priceTZS: 150000,
+              perks: ["2‑day access", "Masterclasses", "Marketplace"],
+            },
+            {
+              id: "sme",
+              name: "SME/Startup Pass",
+              priceTZS: 120000,
+              perks: ["2‑day access", "Deal Room access", "Clinic session"],
+            },
+            {
+              id: "student",
+              name: "Student/Youth",
+              priceTZS: 60000,
+              perks: ["Swahili Track", "2‑day access"],
+            },
+            {
+              id: "vip",
+              name: "VIP/Partner",
+              priceTZS: 300000,
+              perks: [
+                "Front‑row seating",
+                "Speaker lounge",
+                "Evening reception",
+              ],
+            },
+          ],
+          payment: {
+            // Replace these with your live details
+            merchantName: "NGCC 2025",
+            tanqrNumber: "000000", // TANeQR/HaloPesa Merchant (placeholder)
+            bankAccountName: "ROTAI COMPANY LTD",
+            bankAccountNo: "0000000000",
+            bankName: "Your Bank, Tanzania",
+            mpesaPayNumber: "000000", // LIPA number placeholder
+            tigopesaPayNumber: "000000",
+            airtelMoneyPayNumber: "000000",
+            halopesaPayNumber: "000000",
+          },
+        };
+
+        // Load dynamic config from content.json if present and override DEFAULT_CONFIG.
+        const [remoteConfig, setRemoteConfig] = React.useState(null);
+        React.useEffect(() => {
+          fetch("content.json")
+            .then((res) => {
+              if (!res.ok) throw new Error("No dynamic config");
+              return res.json();
+            })
+            .then((data) => setRemoteConfig(data))
+            .catch((err) => {
+              console.warn("Falling back to default config:", err);
+            });
+        }, []);
+        // Merge remote config onto the default config. This variable is used throughout the component.
+        const CONFIG = remoteConfig || DEFAULT_CONFIG;
+
+        // State for mobile nav toggling
+        const [navOpen, setNavOpen] = React.useState(false);
+
+        // --- Helpers ---
+        const fmtTZS = (n) =>
+          new Intl.NumberFormat("en-TZ", {
+            style: "currency",
+            currency: "TZS",
+            maximumFractionDigits: 0,
+          }).format(n);
+
+        return (
+          <div
+            className="min-h-screen"
+            style={{
+              backgroundColor: CONFIG.theme.sand,
+              color: CONFIG.theme.ink,
+              fontFamily: 'Poppins, ui-sans-serif, system-ui',
+            }}
+          >
+            {/* Global smooth scrolling */}
+            <style>{`html { scroll-behavior: smooth; }`}</style>
+
+            {/* NAV */}
+            <nav
+              className="sticky top-0 z-40 backdrop-blur bg-white/80 border-b"
+              style={{ borderColor: CONFIG.theme.mint }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: CONFIG.theme.primary }}
+                  >
+                    {/* Leaf mark */}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M20 4C12 4 7 9 7 17c0 1.3.2 2.5.6 3.6C10 19 12 15 17 12c-2 3-3 6-3.5 8 3-.2 5.5-1.4 7.5-3.6 2-2.3 3-5.2 3-8.4 0-1.8-1.2-4-4-4Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    className="font-extrabold tracking-tight text-lg"
+                    style={{ color: CONFIG.theme.primary }}
+                  >
+                    NGCC 2025
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="hidden md:flex items-center gap-6 text-sm">
+                    <a href="#about" className="hover:opacity-80">
+                      About
+                    </a>
+                    <a href="#themes" className="hover:opacity-80">
+                      Themes
+                    </a>
+                    <a href="#program" className="hover:opacity-80">
+                      Program
+                    </a>
+                    <a href="#tickets" className="hover:opacity-80">
+                      Tickets
+                    </a>
+                    <a href="#sponsors" className="hover:opacity-80">
+                      Sponsors
+                    </a>
+                    <a
+                      href="#register"
+                      className="px-4 py-2 rounded-xl font-semibold"
+                      style={{
+                        background: CONFIG.theme.primaryAlt,
+                        color: 'white',
+                      }}
+                    >
+                      Register
+                    </a>
+                  </div>
+                  <button
+                    className="md:hidden p-2 rounded-xl ring-1"
+                    style={{ borderColor: CONFIG.theme.mint }}
+                    onClick={() => setNavOpen((v) => !v)}
+                    aria-label="Toggle menu"
+                  >
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M3 6h18M3 12h18M3 18h18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              {navOpen && (
+                <div
+                  className="md:hidden border-t"
+                  style={{ borderColor: CONFIG.theme.mint }}
+                >
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3 text-sm">
+                    <a href="#about" onClick={() => setNavOpen(false)} className="py-1">
+                      About
+                    </a>
+                    <a href="#themes" onClick={() => setNavOpen(false)} className="py-1">
+                      Themes
+                    </a>
+                    <a href="#program" onClick={() => setNavOpen(false)} className="py-1">
+                      Program
+                    </a>
+                    <a href="#tickets" onClick={() => setNavOpen(false)} className="py-1">
+                      Tickets
+                    </a>
+                    <a href="#sponsors" onClick={() => setNavOpen(false)} className="py-1">
+                      Sponsors
+                    </a>
+                    <a
+                      href="#register"
+                      onClick={() => setNavOpen(false)}
+                      className="px-4 py-2 mt-1 rounded-xl font-semibold text-center"
+                      style={{
+                        background: CONFIG.theme.primaryAlt,
+                        color: 'white',
+                      }}
+                    >
+                      Register
+                    </a>
+                  </div>
+                </div>
+              )}
+            </nav>
+
+            {/* HERO */}
+            <header className="relative overflow-hidden">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `radial-gradient(1000px 500px at 10% 10%, ${CONFIG.theme.mint}, transparent),radial-gradient(800px 400px at 90% 10%, #D9F2EA, transparent)`,
+                }}
+              />
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative">
+                <div className="grid md:grid-cols-2 gap-10 items-center">
+                  <div>
+                    <p
+                      className="text-sm font-semibold mb-3"
+                      style={{ color: CONFIG.theme.accent }}
+                    >
+                      {CONFIG.event.hashtag}
+                    </p>
+                    <h1
+                      className="text-3xl md:text-5xl font-extrabold leading-tight"
+                      style={{ color: CONFIG.theme.primary }}
+                    >
+                      {CONFIG.event.title}
+                    </h1>
+                    <p className="mt-4 text-lg md:text-xl opacity-90">
+                      {CONFIG.event.themeLine}
+                    </p>
+                    <p
+                      className="mt-2 text-sm font-semibold"
+                      style={{ color: CONFIG.theme.primaryAlt }}
+                    >
+                      {CONFIG.event.dates} · {CONFIG.event.city}
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <a
+                        href="#register"
+                        className="px-6 py-3 rounded-2xl font-semibold shadow hover:translate-y-[-1px] transition"
+                        style={{
+                          background: CONFIG.theme.primaryAlt,
+                          color: 'white',
+                        }}
+                      >
+                        Register Now
+                      </a>
+                      <a
+                        href="#tickets"
+                        className="px-6 py-3 rounded-2xl font-semibold border"
+                        style={{
+                          borderColor: CONFIG.theme.primaryAlt,
+                          color: CONFIG.theme.primaryAlt,
+                        }}
+                      >
+                        View Tickets
+                      </a>
+                    </div>
+                    <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+                      {[
+                        { k: 'Delegates', v: '300+' },
+                        { k: 'Bankable Projects', v: '20+' },
+                        { k: 'Deals Catalysed', v: '15+' },
+                      ].map((s, i) => (
+                        <div
+                          key={i}
+                          className="rounded-2xl p-4"
+                          style={{ background: CONFIG.theme.mint }}
+                        >
+                          <div
+                            className="text-2xl font-extrabold"
+                            style={{ color: CONFIG.theme.primary }}
+                          >
+                            {s.v}
+                          </div>
+                          <div className="text-xs opacity-80">{s.k}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <div
+                      className="aspect-[4/3] rounded-3xl shadow-xl ring-1"
+                      style={{ background: 'white', borderColor: CONFIG.theme.mint }}
+                    >
+                      {/* Placeholder hero image block — replace src with a still from your deck */}
+                      <div
+                        className="w-full h-full rounded-3xl flex items-center justify-center text-center p-6"
+                        style={{
+                          background: `linear-gradient(135deg, ${CONFIG.theme.primary} 0%, ${CONFIG.theme.primaryAlt} 100%)`,
+                        }}
+                      >
+                        <div className="text-white">
+                          <div className="text-xl font-semibold opacity-80">
+                            Conference Visual
+                          </div>
+                          <div className="mt-2 text-3xl font-extrabold">
+                            Insert Deck Image Here
+                          </div>
+                          <div className="mt-3 text-sm opacity-80">
+                            Swap this block with a hero image exported from the pitch deck.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            {/* ABOUT */}
+            <section id="about" className="py-16" style={{ scrollMarginTop: '96px' }}>
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid md:grid-cols-3 gap-10 items-start">
+                  <div className="md:col-span-2">
+                    <h2
+                      className="text-2xl md:text-3xl font-extrabold mb-4"
+                      style={{ color: CONFIG.theme.primary }}
+                    >
+                      Why NGCC?
+                    </h2>
+                    <p className="leading-relaxed">
+                      NGCC is Tanzania’s premier platform to unlock green finance for
+                      renewable energy, climate‑smart agriculture and sustainable
+                      infrastructure — breaking barriers like high interest rates, low
+                      awareness and limited policy alignment. The conference is
+                      purpose‑built to connect funders with investable projects while
+                      ensuring gender and youth inclusion.
+                    </p>
+                    <ul className="mt-6 grid gap-4">
+                      {[
+                        'Financial de‑risking & affordable capital (blended finance, guarantees, green bonds)',
+                        'Democratizing green finance awareness (mobile campaigns, help desks, incubators)',
+                        'Policy integration & institutional alignment (NDC tracking, green budget tagging)',
+                        'Gender & intersectional inclusion (30% climate funds for women/youth/PWDs)',
+                      ].map((li, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span
+                            className="mt-1 w-2.5 h-2.5 rounded-full"
+                            style={{ background: CONFIG.theme.accent }}
+                          />
+                          <span>{li}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <aside
+                    className="rounded-3xl p-6"
+                    style={{ background: CONFIG.theme.mint }}
+                  >
+                    <div className="text-sm opacity-80">Presented by</div>
+                    <div className="text-lg font-bold">{CONFIG.org.name}</div>
+                    <div className="mt-3 text-sm">Contact</div>
+                    <a
+                      href={`mailto:${CONFIG.org.email}`}
+                      className="block underline"
+                    >
+                      {CONFIG.org.email}
+                    </a>
+                    <a
+                      href={`tel:${CONFIG.org.phone}`}
+                      className="block underline"
+                    >
+                      {CONFIG.org.phone}
+                    </a>
+                    <a
+                      href={CONFIG.org.website}
+                      target="_blank"
+                      className="block underline"
+                    >
+                      {CONFIG.org.website}
+                    </a>
+                  </aside>
+                </div>
+              </div>
+            </section>
+
+            {/* THEMES */}
+            <section
+              id="themes"
+              className="py-16"
+              style={{ background: 'white', scrollMarginTop: '96px' }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2
+                  className="text-2xl md:text-3xl font-extrabold mb-8"
+                  style={{ color: CONFIG.theme.primary }}
+                >
+                  Conference Thematic Areas
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[
+                    {
+                      title: 'Financial De‑risking',
+                      points: ['Blended finance', 'Guarantees', 'Green bonds'],
+                    },
+                    {
+                      title: 'Finance Literacy',
+                      points: ['Mobile campaigns', 'Help desks', 'Incubators'],
+                    },
+                    {
+                      title: 'Policy & Alignment',
+                      points: ['NDC dashboard', 'Tax incentives', 'Green tagging'],
+                    },
+                    {
+                      title: 'Gender & Inclusion',
+                      points: ['30% climate funds', 'Inclusive procurement', 'Skills‑to‑jobs'],
+                    },
+                  ].map((card, i) => (
+                    <div
+                      key={i}
+                      className="rounded-3xl p-6 ring-1"
+                      style={{
+                        background: CONFIG.theme.sand,
+                        borderColor: CONFIG.theme.mint,
+                      }}
+                    >
+                      <div
+                        className="font-bold text-lg"
+                        style={{ color: CONFIG.theme.primary }}
+                      >
+                        {card.title}
+                      </div>
+                      <ul className="mt-3 space-y-2 text-sm">
+                        {card.points.map((p, j) => (
+                          <li key={j} className="flex items-start gap-2">
+                            <span
+                              className="mt-1 w-2 h-2 rounded-full"
+                              style={{ background: CONFIG.theme.accent }}
+                            />
+                            <span>{p}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* PROGRAM */}
+            <section
+              id="program"
+              className="py-16"
+              style={{ scrollMarginTop: '96px' }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2
+                  className="text-2xl md:text-3xl font-extrabold mb-6"
+                  style={{ color: CONFIG.theme.primary }}
+                >
+                  Program Overview
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {[
+                    {
+                      day: 'Day 1 — 27 Nov',
+                      items: [
+                        'Opening Keynote & NDC Overview',
+                        'Masterclasses: Green Bonds & Carbon Credits',
+                        'Panel: De‑risking & Blended Finance',
+                      ],
+                    },
+                    {
+                      day: 'Day 2 — 28 Nov',
+                      items: [
+                        'Pitches & Deal Flow Sessions',
+                        'Workshop: Bankable Proposals & Funds',
+                        'Marketplace · Clinic · Swahili Track',
+                      ],
+                    },
+                  ].map((d, i) => (
+                    <div
+                      key={i}
+                      className="rounded-3xl p-6 ring-1"
+                      style={{ background: 'white', borderColor: CONFIG.theme.mint }}
+                    >
+                      <div
+                        className="font-bold text-lg"
+                        style={{ color: CONFIG.theme.primary }}
+                      >
+                        {d.day}
+                      </div>
+                      <ul className="mt-3 space-y-2 text-sm">
+                        {d.items.map((it, j) => (
+                          <li key={j} className="flex items-start gap-2">
+                            <span
+                              className="mt-1 w-2 h-2 rounded-full"
+                              style={{ background: CONFIG.theme.accent }}
+                            />
+                            <span>{it}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* TICKETS */}
+            <section
+              id="tickets"
+              className="py-16"
+              style={{ background: CONFIG.theme.sand, scrollMarginTop: '96px' }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="md:flex md:items-end md:justify-between">
+                  <h2
+                    className="text-2xl md:text-3xl font-extrabold"
+                    style={{ color: CONFIG.theme.primary }}
+                  >
+                    Tickets & Pricing (TZS)
+                  </h2>
+                  <p className="opacity-70 text-sm mt-2 md:mt-0">
+                    *Update prices here once finalized.
+                  </p>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+                  {CONFIG.tickets.map((t) => (
+                    <div
+                      key={t.id}
+                      className="rounded-3xl p-6 ring-1 flex flex-col"
+                      style={{ background: 'white', borderColor: CONFIG.theme.mint }}
+                    >
+                      <div
+                        className="font-bold text-lg"
+                        style={{ color: CONFIG.theme.primary }}
+                      >
+                        {t.name}
+                      </div>
+                      <div className="text-3xl font-extrabold mt-2">
+                        {fmtTZS(t.priceTZS)}
+                      </div>
+                      <ul className="mt-4 text-sm space-y-2">
+                        {t.perks.map((p, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span
+                              className="mt-1 w-2 h-2 rounded-full"
+                              style={{ background: CONFIG.theme.accent }}
+                            />
+                            <span>{p}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <a
+                        href="#register"
+                        className="mt-6 px-4 py-2 rounded-xl text-center font-semibold"
+                        style={{ background: CONFIG.theme.primaryAlt, color: 'white' }}
+                      >
+                        Choose {t.name}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* SPONSORS */}
+            <section
+              id="sponsors"
+              className="py-16"
+              style={{ background: 'white', scrollMarginTop: '96px' }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2
+                  className="text-2xl md:text-3xl font-extrabold"
+                  style={{ color: CONFIG.theme.primary }}
+                >
+                  Sponsorship Packages
+                </h2>
+                <div className="grid md:grid-cols-3 gap-6 mt-6">
+                  {[
+                    {
+                      tier: 'Platinum',
+                      amount: 'USD 30,000+',
+                      bullets: [
+                        'Event ‘presented by’ status',
+                        'Keynote slot',
+                        'Largest booth',
+                        'Prime branding',
+                        'Media coverage',
+                        'Side meetings',
+                      ],
+                      badge: true,
+                    },
+                    {
+                      tier: 'Gold',
+                      amount: 'USD 20,000–29,000',
+                      bullets: [
+                        'Own a full track',
+                        'Strong branding',
+                        'Large booth',
+                        'Side meetings',
+                      ],
+                    },
+                    {
+                      tier: 'Silver',
+                      amount: 'USD 10,000–19,000',
+                      bullets: [
+                        'Panel thought‑leadership',
+                        'Exhibition booth',
+                        'Visible branding',
+                        'Guaranteed meetings',
+                      ],
+                    },
+                  ].map((pkg, i) => (
+                    <div
+                      key={i}
+                      className="rounded-3xl p-6 ring-1 flex flex-col"
+                      style={{
+                        background: CONFIG.theme.sand,
+                        borderColor: CONFIG.theme.mint,
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="text-xl font-extrabold"
+                          style={{ color: CONFIG.theme.primary }}
+                        >
+                          {pkg.tier}
+                        </div>
+                        {pkg.badge && (
+                          <span
+                            className="px-2 py-1 rounded-full text-xs font-bold"
+                            style={{
+                              background: CONFIG.theme.gold,
+                              color: '#1b1b1b',
+                            }}
+                          >
+                            Most Popular
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm opacity-80 mt-1">{pkg.amount}</div>
+                      <ul className="mt-4 text-sm space-y-2">
+                        {pkg.bullets.map((b, j) => (
+                          <li key={j} className="flex items-start gap-2">
+                            <span
+                              className="mt-1 w-2 h-2 rounded-full"
+                              style={{ background: CONFIG.theme.accent }}
+                            />
+                            <span>{b}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <a
+                        href="#register"
+                        className="mt-6 px-4 py-2 rounded-xl text-center font-semibold"
+                        style={{ background: CONFIG.theme.primaryAlt, color: 'white' }}
+                      >
+                        Become a Sponsor
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* REGISTER & PAY */}
+            <section
+              id="register"
+              className="py-16"
+              style={{ background: CONFIG.theme.mint, scrollMarginTop: '96px' }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2
+                  className="text-2xl md:text-3xl font-extrabold mb-6"
+                  style={{ color: CONFIG.theme.primary }}
+                >
+                  Register & Pay
+                </h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* FORM */}
+                  <form
+                    className="md:col-span-2 rounded-3xl p-6 bg-white ring-1"
+                    style={{ borderColor: CONFIG.theme.sand }}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      alert('Demo: form captured. Connect to your backend or Google Sheet.');
+                    }}
+                  >
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Full Name
+                        </label>
+                        <input
+                          required
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          placeholder="Your name"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          placeholder="you@example.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Phone
+                        </label>
+                        <input
+                          required
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          placeholder="+255…"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Organization
+                        </label>
+                        <input
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          placeholder="Company / University"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Ticket
+                        </label>
+                        <select
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          defaultValue={CONFIG.tickets[0].id}
+                        >
+                          {CONFIG.tickets.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.name} — {fmtTZS(t.priceTZS)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold">
+                          Add‑ons
+                        </label>
+                        <select
+                          className="mt-1 w-full px-3 py-2 rounded-xl ring-1 focus:outline-none"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                        >
+                          <option value="none">None</option>
+                          <option value="masterclass">
+                            Masterclass Bundle (+ TZS 25,000)
+                          </option>
+                          <option value="reception">
+                            Evening Reception (+ TZS 40,000)
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <label className="text-sm font-semibold">
+                        Payment Method
+                      </label>
+                      <div className="mt-2 grid md:grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          className="px-4 py-3 rounded-xl border text-left"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          onClick={() =>
+                            alert('Use your TANeQR/MNO merchant details here.')
+                          }
+                        >
+                          Mobile Money (TANeQR/M‑Pesa/TigoPesa/Airtel Money/HaloPesa)
+                        </button>
+                        <button
+                          type="button"
+                          className="px-4 py-3 rounded-xl border text-left"
+                          style={{ borderColor: CONFIG.theme.mint }}
+                          onClick={() =>
+                            alert('Connect Stripe/Flutterwave/Paystack checkout.')
+                          }
+                        >
+                          Debit/Credit Card (Stripe/Flutterwave)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center gap-3">
+                      <button
+                        className="px-6 py-3 rounded-2xl font-semibold"
+                        style={{ background: CONFIG.theme.primaryAlt, color: 'white' }}
+                        type="submit"
+                      >
+                        Submit Registration
+                      </button>
+                      <a
+                        className="px-6 py-3 rounded-2xl font-semibold ring-1"
+                        style={{ borderColor: CONFIG.theme.mint }}
+                        href={`https://wa.me/255745404545?text=Hello%20NGCC%202025%20team%2C%20I%20have%20a%20question%20about%20registration.`}
+                        target="_blank"
+                      >
+                        Ask on WhatsApp
+                      </a>
+                    </div>
+
+                    <p className="mt-3 text-xs opacity-70">
+                      Submitting will store your details locally (demo). Replace
+                      with your backend, Google Sheet, or Airtable endpoint.
+                    </p>
+                  </form>
+
+                  {/* PAYMENT HELP */}
+                  <div
+                    className="rounded-3xl p-6"
+                    style={{ background: 'white' }}
+                  >
+                    <div className="font-bold" style={{ color: CONFIG.theme.primary }}>
+                      How to Pay (Replace with live details)
+                    </div>
+                    <ul className="mt-4 space-y-3 text-sm">
+                      <li>
+                        <div className="font-semibold">TANeQR / Mobile Money</div>
+                        <div>
+                          Use <span className="font-semibold">Merchant/LIPA:</span>{' '}
+                          {CONFIG.payment.tanqrNumber}
+                        </div>
+                        <div className="opacity-80">
+                          M‑Pesa, TigoPesa, Airtel Money, HaloPesa supported.
+                        </div>
+                      </li>
+                      <li>
+                        <div className="font-semibold">
+                          Direct Mobile Money
+                        </div>
+                        <div>
+                          M‑Pesa LIPA: {CONFIG.payment.mpesaPayNumber} ·
+                          TigoPesa: {CONFIG.payment.tigopesaPayNumber}
+                        </div>
+                        <div>
+                          Airtel Money: {CONFIG.payment.airtelMoneyPayNumber} ·
+                          HaloPesa: {CONFIG.payment.halopesaPayNumber}
+                        </div>
+                      </li>
+                      <li>
+                        <div className="font-semibold">Bank Transfer</div>
+                        <div>{CONFIG.payment.bankAccountName}</div>
+                        <div>{CONFIG.payment.bankName}</div>
+                        <div>Account No: {CONFIG.payment.bankAccountNo}</div>
+                      </li>
+                      <li className="opacity-80">
+                        Email your payment slip to{' '}
+                        <a
+                          className="underline"
+                          href={`mailto:${CONFIG.org.email}`}
+                        >
+                          {CONFIG.org.email}
+                        </a>{' '}
+                        for a receipt.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA BAR */}
+            <section className="py-12" style={{ background: CONFIG.theme.primary }}>
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <h3 className="text-2xl md:text-3xl font-extrabold">
+                  Ready to unlock Tanzania’s green future?
+                </h3>
+                <p className="mt-2 opacity-90">
+                  Join investors, banks, policymakers, SMEs and youth innovators for
+                  two high‑impact days.
+                </p>
+                <a
+                  href="#register"
+                  className="inline-block mt-5 px-6 py-3 rounded-2xl font-semibold"
+                  style={{ background: CONFIG.theme.gold, color: '#1b1b1b' }}
+                >
+                  Get Your Pass
+                </a>
+              </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer
+              className="py-10"
+              style={{ background: '#0E2A21', color: '#CFE8E2' }}
+            >
+              <div
+                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-8"
+              >
+                <div>
+                  <div className="font-extrabold text-lg">NGCC 2025</div>
+                  <div className="text-sm opacity-80">
+                    {CONFIG.event.themeLine}
+                  </div>
+                </div>
+                <div className="text-sm">
+                  <div className="font-semibold">Contact</div>
+                  <div>
+                    <a className="underline" href={`mailto:${CONFIG.org.email}`}> 
+                      {CONFIG.org.email}
+                    </a>
+                  </div>
+                  <div>
+                    <a className="underline" href={`tel:${CONFIG.org.phone}`}> 
+                      {CONFIG.org.phone}
+                    </a>
+                  </div>
+                  <div>
+                    <a className="underline" href={CONFIG.org.website} target="_blank"> 
+                      {CONFIG.org.website}
+                    </a>
+                  </div>
+                </div>
+                <div className="text-sm">
+                  <div className="font-semibold">Quick Links</div>
+                  <a href="#program" className="block hover:underline">Program</a>
+                  <a href="#tickets" className="block hover:underline">Tickets</a>
+                  <a href="#sponsors" className="block hover:underline">Sponsors</a>
+                  <a href="#register" className="block hover:underline">Register</a>
+                </div>
+              </div>
+              <div className="mt-8 text-center text-xs opacity-60">
+                © {new Date().getFullYear()} {CONFIG.org.name}. All rights reserved.
+              </div>
+            </footer>
+          </div>
+        );
+      };
+
+      // Mount the React component into the root element
+      ReactDOM.createRoot(document.getElementById('root')).render(
+        <NGCCLandingPage />
+      );
+    </script>
+  </body>
+</html>
