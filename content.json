@@ -1,0 +1,61 @@
+{
+  "theme": {
+    "primary": "#1B5E20",
+    "primaryAlt": "#2E7D32",
+    "accent": "#00A48A",
+    "mint": "#E6F4F1",
+    "ink": "#123226",
+    "sand": "#F7FAF8",
+    "gold": "#C8A24A"
+  },
+  "event": {
+    "title": "National Green Capital Conference (NGCC)",
+    "hashtag": "#NGCC2025",
+    "dates": "27–28 Nov 2025",
+    "city": "Dar es Salaam, Tanzania",
+    "themeLine": "Accelerating Green Finance & Jobs towards Tanzania’s Climate‑Resilient Economy"
+  },
+  "org": {
+    "name": "ROTAI Company Ltd.",
+    "email": "info@rotai.co.tz",
+    "phone": "+255 745 404 545",
+    "website": "https://www.rotai.co.tz"
+  },
+  "tickets": [
+    {
+      "id": "standard",
+      "name": "Standard Pass",
+      "priceTZS": 150000,
+      "perks": ["2‑day access", "Masterclasses", "Marketplace"]
+    },
+    {
+      "id": "sme",
+      "name": "SME/Startup Pass",
+      "priceTZS": 120000,
+      "perks": ["2‑day access", "Deal Room access", "Clinic session"]
+    },
+    {
+      "id": "student",
+      "name": "Student/Youth",
+      "priceTZS": 60000,
+      "perks": ["Swahili Track", "2‑day access"]
+    },
+    {
+      "id": "vip",
+      "name": "VIP/Partner",
+      "priceTZS": 300000,
+      "perks": ["Front‑row seating", "Speaker lounge", "Evening reception"]
+    }
+  ],
+  "payment": {
+    "merchantName": "NGCC 2025",
+    "tanqrNumber": "000000",
+    "bankAccountName": "ROTAI COMPANY LTD",
+    "bankAccountNo": "0000000000",
+    "bankName": "Your Bank, Tanzania",
+    "mpesaPayNumber": "000000",
+    "tigopesaPayNumber": "000000",
+    "airtelMoneyPayNumber": "000000",
+    "halopesaPayNumber": "000000"
+  }
+}
